@@ -1,0 +1,16 @@
+{
+  "name": "qx-node",
+  "description": "QuoteXpress Node Helper",
+  "private": true,
+  "author": "Tonic Works",
+  "scripts": {
+    "test": "echo \"Error: no test specifified\" && exit 1"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "minimal-request-promise": "^1.3.0",
+    "request": "^2.80.0"
+  },
+  "version": "1.0.0",
+  "main": "qx.js"
+}
