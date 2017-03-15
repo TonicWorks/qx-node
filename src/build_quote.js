@@ -11,11 +11,26 @@ const WORK_TYPE_SCOTLAND_SALE       = 52;
 const WORK_TYPE_COMM_PURCHASE = 101;
 const WORK_TYPE_COMM_SALE     = 102;
 
+// Not actually WorkTypeIds - we just need a value to represent combined cases locally.
+const COMBINED_TRANSFER_REMO = 1000000;
+const COMBINED_SALE_PURCHASE = 1000001;
+
+const FEE_CATEGORY_LEGAL_FEES_ID       = 1;
+const FEE_CATEGORY_ADDITIONAL_COSTS_ID = 2;
+const FEE_CATEGORY_DISBURSEMENTS_ID    = 3;
+const FEE_CATEGORY_SERVICE_FEES_ID     = 1000;
+
+const STATUS_CREATED              = 1;
+const STATUS_INSTRUCTED           = 3;
+const STATUS_PARTIALLY_INSTRUCTED = 5;
+
 const TENURE_TYPE_FREEHOLD  = 1;
 const TENURE_TYPE_LEASEHOLD = 2;
 
 const MORTGAGE_TYPE_NONE   = 0;
 const MORTGAGE_TYPE_NORMAL = 1;
+
+const _ = require('lodash');
 
 //const requestPromise = require('minimal-request-promise');
 
@@ -39,7 +54,17 @@ module.exports = function buildQuote(contact,quoteEntries){
         }
     }
 
-    function buildContact(contact) {
+    function formatMortgage(mortgage){
+        //need to handle islamic too
+        if(mortgage==true){
+            return MORTGAGE_TYPE_NORMAL;
+        }
+        else{
+            return MORTGAGE_TYPE_NONE;
+        }
+    }
+    
+    function buildContact() {
         return {
             'contact': {
                 'title':contact.title,
@@ -47,37 +72,96 @@ module.exports = function buildQuote(contact,quoteEntries){
                 'surname':contact.surname,
                 'emailAddress':contact.emailAddress,
                 'homeTelno':contact.homeTelno}
-
         };
     }
 
-    function buildRemortgage(remortgage) {
-        return {
+    function buildRemortgage(details) {
+        let res = {
             'workTypeId':WORK_TYPE_REMORTGAGE,
             'conveyancingValues':{
-                'propertyPrice':remortgage.propertyPrice,
-                'tenureTypeId':formatTenure(remortgage.tenure),
-                'involvedParties':remortgage.involvedParties,
-                'isBuyToLet':remortgage.isBuyToLet
+                'propertyPrice':details.propertyPrice,
+                'tenureTypeId':formatTenure(details.tenure),
+                'involvedParties':details.involvedParties,
+                'isBuyToLet':details.isBuyToLet
+            }
+        };
+        if(_.get(details, ['isBuyToLet'])){
+            res.conveyancingValues.isBuyToLet = true;
+        }
+        return res;
+    }
+
+    function buildTransfer(details) {
+        let res = {
+            'workTypeId':WORK_TYPE_TRANSFER,
+            'conveyancingValues':{
+                'propertyPrice':details.propertyPrice,
+                'tenureTypeId':formatTenure(details.tenure),
+                'involvedParties':details.involvedParties,
+                'transferMoneyExchanged':details.transferMoneyExchanged,
+                'transferMortgageValue':details.transferMortgageValue,
+                'transferPercentTransferred':details.transferPercentTransferred
+            }
+        };
+        if(_.get(details, ['isBuyToLet'])){
+            res.conveyancingValues.isBuyToLet = true;
+        }
+        return res;
+    }
+
+    function buildSale(details) {
+        return {
+            'workTypeId':WORK_TYPE_SALE,
+            'conveyancingValues':{
+                'propertyPrice':details.propertyPrice,
+                'tenureTypeId':formatTenure(details.tenure),
+                'mortgageTypeId':formatMortgage(details.mortgage),
+                'involvedParties':details.involvedParties,
             }
         };
     }
 
-    function buildRequest(contact,quoteEntries){
-
-        var quoteLines=[];
-        if(quoteEntries.remortgage){
-            quoteLines[0] = buildRemortgage(quoteEntries.remortgage);
-        }
-
+    function buildPurchase(details) {
         return {
-            'contacts' : buildContact(contact),
-            'quoteEntries' : quoteLines
+            'workTypeId':WORK_TYPE_PURCHASE,
+            'conveyancingValues':{
+                'propertyPrice':details.propertyPrice,
+                'tenureTypeId':formatTenure(details.tenure),
+                'mortgageTypeId':formatMortgage(details.mortgage),
+                'involvedParties':details.involvedParties,
+            }
         };
     }
 
+    function buildRequest(){
+        var quoteLines=[];
+        if(_.get(quoteEntries, ['remortgage'])){
+            quoteLines.push(buildRemortgage(quoteEntries.remortgage));
+        }
+        if(_.get(quoteEntries, ['transfer'])){
+            quoteLines.push(buildTransfer(quoteEntries.transfer));
+        }
+        if(_.get(quoteEntries, ['sale'])){
+            quoteLines.push(buildSale(quoteEntries.sale));
+        }
+        if(_.get(quoteEntries, ['purchase'])){
+            quoteLines.push(buildPurchase(quoteEntries.purchase));
+        }
+        if(quoteLines.length==0){
+            return false;
+        }
+        else{
+            return {
+                'contacts' : [
+                    buildContact(contact)
+                ],
+                'quoteEntries' : quoteLines
+            };
+        }
+    }
+
     let promise = new Promise(function(resolve, reject) {
-        let request = buildRequest(contact,quoteEntries);
+        let request = buildRequest();
         if(request!=false){
             resolve(request);
         }
@@ -86,6 +170,5 @@ module.exports = function buildQuote(contact,quoteEntries){
             reject(err);
         }
     });
-
     return promise;
 };

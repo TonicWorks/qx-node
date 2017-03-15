@@ -2,12 +2,20 @@
 
 const qx = require('qx');
 
+let testCredentials = {
+    pass : 'user' + ":" + 'pass',
+    hostname : 'host',
+    campaignId : 'campaignid'
+};
+
+let testHash = 'somehash';
+
 let contact = {
     'title':'Mr',
-    'forename':'Matt',
-    'surname':'Pennington',
-    'emailAddress':'mp@tonic.works',
-    'homeTelno':'07543389333'
+    'forename':'John',
+    'surname':'Doe',
+    'emailAddress':'testing@tonic.works',
+    'homeTelno':'01234567891'
 }
 
 let remortgage = {
@@ -21,4 +29,16 @@ let quoteEntries = [];
 
 quoteEntries['remortgage'] = remortgage;
 
-return qx(contact,quoteEntries);
+/*qx.addQuote(credentials,contact,quoteEntries)
+    .then(function(res) {
+        console.log('res is ',res);
+    }, function (error) {
+        console.log('got error', error);
+    });*/
+
+qx.retrieveQuote(testCredentials,testHash)
+    .then(function(res) {
+        console.log('res is ',res);
+    }, function (error) {
+        console.log('got error', error);
+    });
