@@ -11,10 +11,6 @@ const WORK_TYPE_SCOTLAND_SALE       = 52;
 const WORK_TYPE_COMM_PURCHASE = 101;
 const WORK_TYPE_COMM_SALE     = 102;
 
-// Not actually WorkTypeIds - we just need a value to represent combined cases locally.
-const COMBINED_TRANSFER_REMO = 1000000;
-const COMBINED_SALE_PURCHASE = 1000001;
-
 const FEE_CATEGORY_LEGAL_FEES_ID       = 1;
 const FEE_CATEGORY_ADDITIONAL_COSTS_ID = 2;
 const FEE_CATEGORY_DISBURSEMENTS_ID    = 3;
@@ -82,7 +78,6 @@ module.exports = function buildQuote(contact,quoteEntries){
                 'propertyPrice':details.propertyPrice,
                 'tenureTypeId':formatTenure(details.tenure),
                 'involvedParties':details.involvedParties,
-                'isBuyToLet':details.isBuyToLet
             }
         };
         if(_.get(details, ['isBuyToLet'])){
@@ -103,9 +98,9 @@ module.exports = function buildQuote(contact,quoteEntries){
                 'transferPercentTransferred':details.transferPercentTransferred
             }
         };
-        if(_.get(details, ['isBuyToLet'])){
+        /*if(_.get(details, ['isBuyToLet'])){
             res.conveyancingValues.isBuyToLet = true;
-        }
+        }*/
         return res;
     }
 

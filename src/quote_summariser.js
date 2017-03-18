@@ -38,6 +38,8 @@ module.exports = function quoteSummariser(quote){
 
     let promise = new Promise(function(resolve, reject) {
 
+        //console.log(quoteEntry);
+
         function getCaseTypeVerb(caseTypeId) {
             let verb = 'conveyancing';
             if(caseTypeId == WORK_TYPE_PURCHASE){
@@ -56,7 +58,7 @@ module.exports = function quoteSummariser(quote){
         }
 
         function summariseWork(quoteEntry) {
-            //console.log(quoteEntry);
+
             let vars = {
                 'quoteSnapshotLegalExVat'        : 0,
                 'quoteTotalLegalFeesEx'          : 0,
@@ -72,6 +74,7 @@ module.exports = function quoteSummariser(quote){
                 'quoteCaseTypeVerb'              : getCaseTypeVerb(quoteEntry['work']['workTypeId']),
                 'quoteSnapshotDisbursementOther' : 0,
                 'quoteTotalVat'                  : 0,
+                'quoteTotal'                     : 0,
                 //'quotePartPaymentAmountExVat'    : 0,
                 //'quotePartPaymentAmountIncVat'   : 0,
                 'rawFirmFees'                   :0,
@@ -90,6 +93,8 @@ module.exports = function quoteSummariser(quote){
 
             for (var i = 0, len = quoteEntry['fees'].length; i < len; i++) {
                 if (_.isEmpty(quoteEntry['fees'][i]['commission'])) quoteEntry['fees'][i]['commission'] = 0;
+
+                vars['quoteTotal'] += quoteEntry['fees'][i]['value'] + quoteEntry['fees'][i]['commission'] + quoteEntry['fees'][i]['tax'];;
 
                 switch (quoteEntry['fees'][i]['feeCategoryId']) {
                     case FEE_CATEGORY_LEGAL_FEES_ID:
@@ -167,6 +172,7 @@ module.exports = function quoteSummariser(quote){
             vars['rawFirmDisbursements'] = otherDisbursements;
             vars['rawFirmVat'] = vat;
             vars['rawFirmTotal'] = vars['quoteTotalLegalFeesEx'] + otherDisbursements + vat;
+            vars['rawQuoteTotal'] = vars['quoteTotal'];
 
             vars['quoteOnlyLegalExVat']            = currencyFormatter.format(vars['quoteOnlyLegalExVat'], { locale: 'en-GB' });
             vars['quoteSnapshotDisbursementOther'] = currencyFormatter.format(otherDisbursements, { locale: 'en-GB' });
@@ -174,6 +180,7 @@ module.exports = function quoteSummariser(quote){
             vars['quoteSnapshotSubtotal']          = currencyFormatter.format(totalDisbursement + vat, { locale: 'en-GB' });
             vars['quoteAllDisbursementSubtotal']   = currencyFormatter.format(totalDisbursement, { locale: 'en-GB' });
 
+            vars['quoteTotal'] = currencyFormatter.format(vars['quoteTotal'], { locale: 'en-GB' });
             vars['quoteTotalExVat']  = currencyFormatter.format(vars['quoteTotalLegalFeesEx'] + totalDisbursement + totalService, { locale: 'en-GB' });
             vars['quoteTotalIncVat'] = currencyFormatter.format(vars['quoteTotalLegalFeesEx'] + totalDisbursement + totalService + vat, { locale: 'en-GB' });
             vars['quoteTotalLegalFeesEx'] = currencyFormatter.format(vars['quoteTotalLegalFeesEx'], { locale: 'en-GB' });
@@ -194,8 +201,17 @@ module.exports = function quoteSummariser(quote){
             return vars;
         }
 
-        let vars = {
+        let quoteDetails = {
             contact : quote.contacts[0],
+            quoteTotal: 0,
+            firmFees: 0,
+            firmDisbursements: 0,
+            firmVat: 0,
+            firmTotal: 0,
+            searchPack: 0,
+            landReg: 0,
+            stampDuty: 0,
+            rawQuoteTotal: 0,
             rawFirmFees: 0,
             rawFirmDisbursements: 0,
             rawFirmVat: 0,
@@ -207,8 +223,9 @@ module.exports = function quoteSummariser(quote){
                 transfer : false,
                 remortgage : false,
                 sale : false,
-                purchase: false,
-            }
+                purchase: false
+            },
+            quoteTypeString:false
         };
 
         for (var i = 0, len = quote.quoteEntries.length; i < len; i++) {
@@ -216,29 +233,82 @@ module.exports = function quoteSummariser(quote){
             let res = summariseWork(entry);
 
             if(res.quoteCaseTypeId == WORK_TYPE_PURCHASE){
-                vars.cases.purchase = res;
+                quoteDetails.cases.purchase = res;
+                quoteDetails.quoteTypeString = 'purchase';
             }
             else if(res.quoteCaseTypeId == WORK_TYPE_SALE){
-                vars.cases.sale = res;
+                quoteDetails.cases.sale = res;
+                quoteDetails.quoteTypeString = 'sale';
 
             }
             else if(res.quoteCaseTypeId == WORK_TYPE_TRANSFER){
-                vars.cases.transfer = res;
+                quoteDetails.cases.transfer = res;
+                quoteDetails.quoteTypeString = 'equity transfer';
             }
             else if(res.quoteCaseTypeId == WORK_TYPE_REMORTGAGE){
-                vars.cases.remortgage = res;
+                quoteDetails.cases.remortgage = res;
+                quoteDetails.quoteTypeString = 'remortgage';
             }
-            vars.rawFirmFees += res.rawFirmFees;
-            vars.rawFirmDisbursements += res.rawFirmDisbursements;
-            vars.rawFirmVat += res.rawFirmVat;
-            vars.rawFirmTotal += res.rawFirmTotal;
-            vars.rawSearchPack += res.rawSearchPack;
-            vars.rawLandReg += res.rawLandReg;
-            vars.rawStampDuty += res.rawStampDuty;
-            //console.log(res);
+            quoteDetails.rawQuoteTotal += res.rawQuoteTotal;
+            quoteDetails.rawFirmFees += res.rawFirmFees;
+            quoteDetails.rawFirmDisbursements += res.rawFirmDisbursements;
+            quoteDetails.rawFirmVat += res.rawFirmVat;
+            quoteDetails.rawFirmTotal += res.rawFirmTotal;
+            quoteDetails.rawSearchPack += res.rawSearchPack;
+            quoteDetails.rawLandReg += res.rawLandReg;
+            quoteDetails.rawStampDuty += res.rawStampDuty;
         }
+        quoteDetails.quoteTotal = currencyFormatter.format(quoteDetails.rawQuoteTotal, { locale: 'en-GB' });
+        quoteDetails.firmFees = currencyFormatter.format(quoteDetails.rawFirmFees, { locale: 'en-GB' });
+        quoteDetails.firmDisbursements = currencyFormatter.format(quoteDetails.rawFirmDisbursements, { locale: 'en-GB' });
+        quoteDetails.firmVat = currencyFormatter.format(quoteDetails.rawFirmVat, { locale: 'en-GB' });
+        quoteDetails.firmTotal = currencyFormatter.format(quoteDetails.rawFirmTotal, { locale: 'en-GB' });
+        quoteDetails.searchPack = currencyFormatter.format(quoteDetails.rawSearchPack, { locale: 'en-GB' });
+        quoteDetails.landReg = currencyFormatter.format(quoteDetails.rawLandReg, { locale: 'en-GB' });
+        quoteDetails.stampDuty = currencyFormatter.format(quoteDetails.rawStampDuty, { locale: 'en-GB' });
 
-        resolve(vars);
+        let quoteText = [];
+        //build a friendly set of information about the quote
+        let description = 'We estimate the cost for us to complete ';
+
+        if(quoteDetails.cases.transfer!=false && quoteDetails.cases.remortgage!=false){
+            quoteDetails.quoteTypeString = 'transfer of equity and remortgage';
+            description += 'both your ' + quoteDetails.quoteTypeString;
+        }
+        else if(quoteDetails.cases.sale!=false && quoteDetails.cases.purchase!=false){
+            quoteDetails.quoteTypeString = 'sale and purchase';
+            description += 'both your ' + quoteDetails.quoteTypeString;
+        }
+        else{
+            description += 'your ' + quoteDetails.quoteTypeString;
+        }
+        description += ' conveyancing will be ' + quoteDetails.firmTotal + ' (including VAT). ';
+        quoteText.push(description);
+
+        if(quoteDetails.rawLandReg > 0 && quoteDetails.rawStampDuty > 0){
+            quoteText.push("In addition there is a fee of " + quoteDetails.landReg + " (payable to the Land Registry) and Stamp Duty Land Tax of " + quoteDetails.stampDuty + " (payable to HM Revenue and Customs) when your transaction completes.");
+            quoteText.push("We will ask you to transfer funds to us to cover these costs prior to completion of your matter, and then pay them on your behalf.");
+        }
+        else{
+            if(quoteDetails.rawLandReg > 0){
+                quoteText.push("In addition there is a fee of " + quoteDetails.landReg + " (payable to the Land Registry) when your transaction completes.");
+                quoteText.push("We will ask you to transfer funds to us to cover this fee prior to completion of your matter, and then pay it on your behalf.");
+            }
+            if(quoteDetails.rawStampDuty > 0){
+                quoteText.push("In addition there is Stamp Duty (SDLT) of " + quoteDetails.stampDuty + " (payable to HM Revenue and Customs) when your transaction completes.");
+                quoteText.push("We will ask you to transfer funds to us to cover this tax prior to completion of your matter, and then pay it on your behalf.");
+            }        
+        }
+        if(quoteDetails.rawSearchPack > 0){
+            quoteText.push("Because you are buying a property with a mortgage, your mortgage lender will require that property searches are ordered too, and these will cost and additional " + quoteDetails.searchPack + ". ");
+            quoteText.push("Depending on where your property is located, your lender may ask us to order some additional searches (for example if your property is located in a Coal Mining area or their is a perceived Flood Risk). ");
+        }
+        if(quoteDetails.rawLandReg > 0 || quoteDetails.rawStampDuty > 0 || quoteDetails.rawSearchPack > 0){
+            quoteText.push("In total, your conveyancing will therefore cost " + quoteDetails.quoteTotal + ". ");
+        }
+        quoteDetails.quoteText = quoteText,
+        resolve(quoteDetails);
+
     });
     return promise;
 }
