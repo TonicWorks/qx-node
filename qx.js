@@ -1,6 +1,5 @@
 'use strict';
 
-//const req = require('request');
 const _ = require('lodash');
 const requestPromise = require('minimal-request-promise');
 const buildQuote = require('./src/build_quote');
@@ -30,7 +29,7 @@ module.exports = {
                 body.campaignId = credentials.campaignId;
                 console.log('body is ',body);
                 options.body = JSON.stringify(body);
-
+                console.log('options are ',options);
                 return requestPromise(options);
 
             }, function (err) {
