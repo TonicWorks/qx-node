@@ -22,14 +22,14 @@ module.exports = {
                         'Authorization': "Basic " + new Buffer(credentials.pass).toString("base64")
                     }
                 };
-                //optional session id so that qx can reference back to other systems
-                if(!_.isEmpty(sessionId)){
+                //optional session id so that qx can reference back to other systems - qx needs to be extended to accept it before we can start sending it
+                /*if(!_.isEmpty(sessionId)){
                     body.sessionId = sessionId;
-                }
+                }*/
                 body.campaignId = credentials.campaignId;
-                console.log('body is now',body);
+                console.log('body is now',JSON.stringify(body));
                 options.body = JSON.stringify(body);
-                console.log('options are now',options);
+                console.log('options are now',JSON.stringify(options));
                 return requestPromise(options);
 
             }, function (err) {
