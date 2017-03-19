@@ -8,7 +8,7 @@ const summariseQuote = require('./src/quote_summariser');
 
 module.exports = {
 
-    addQuote: function(credentials,contact,quoteEntries){
+    addQuote: function(credentials,contact,quoteEntries,sessionId){
 
         return buildQuote(contact,quoteEntries)
             .then(function (body){
@@ -23,6 +23,10 @@ module.exports = {
                         'Authorization': "Basic " + new Buffer(credentials.pass).toString("base64")
                     }
                 };
+                //optional session id so that qx can reference back to other systems
+                if(!_.isEmpty(sessionId)){
+                    body.sessionId = sessionId;
+                }
                 body.campaignId = credentials.campaignId;
                 console.log('body is ',body);
                 options.body = JSON.stringify(body);
