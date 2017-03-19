@@ -36,9 +36,12 @@ const _ = require('lodash');
 
 module.exports = function quoteSummariser(quote){
 
-    let promise = new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
 
         //console.log(quoteEntry);
+        if(_.isEmpty(quote)){
+            reject('Quote details were empty');
+        }
 
         function getCaseTypeVerb(caseTypeId) {
             let verb = 'conveyancing';
@@ -308,7 +311,5 @@ module.exports = function quoteSummariser(quote){
         }
         quoteDetails.quoteText = quoteText,
         resolve(quoteDetails);
-
     });
-    return promise;
 }

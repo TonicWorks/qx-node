@@ -155,7 +155,7 @@ module.exports = function buildQuote(contact,quoteEntries){
         }
     }
 
-    let promise = new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
         let request = buildRequest();
         if(request!=false){
             resolve(request);
@@ -165,5 +165,5 @@ module.exports = function buildQuote(contact,quoteEntries){
             reject(err);
         }
     });
-    return promise;
+    //return promise;
 };
