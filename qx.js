@@ -33,9 +33,10 @@ module.exports = {
                 return requestPromise(options);
 
             }, function (err) {
-                console.error(err);
+                console.error('error building quote',err);
             })
             .then(function (response) {
+                console.log('quote is ok');
                 let body = JSON.parse(response.body);
                 console.log('quote is ', body);
                 if(_.get(body, ['quoteId']) && _.get(body, ['hash'])){
