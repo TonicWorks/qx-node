@@ -34,6 +34,7 @@ module.exports = {
 
             }, function (err) {
                 console.error('error building quote',err);
+                return {success:false};
             })
             .then(function (response) {
                 console.log('quote is ok');
@@ -45,19 +46,21 @@ module.exports = {
                         quoteId : body.quoteId,
                         hash : body.hash
                     }
-                    return resp;
+                    return Promise.resolve(resp);
                 }
                 else{
                     return {success:false};
                 }
             }, function (error) {
                 console.log('got error', error.body, error.headers, error.statusCode, error.statusMessage);
+                return {success:false};
             })
-            .then(function(res) {
+            /*.then(function(res) {
                 return res;
             }, function (error) {
                 console.log('got error', error);
-            });
+                return {success:false};
+            });*/
     },
     retrieveQuote: function(credentials,hash){
 
@@ -84,11 +87,13 @@ module.exports = {
                 }
             }, function (error) {
                 console.log('got error', error.body, error.headers, error.statusCode, error.statusMessage);
+                return {success:false};
             })
             .then(function(res) {
                 return res;
             }, function (error) {
                 console.log('got error', error);
+                return {success:false};
             });
     }
 };

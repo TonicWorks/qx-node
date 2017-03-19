@@ -205,6 +205,7 @@ module.exports = function quoteSummariser(quote){
         }
 
         let quoteDetails = {
+            success : true,
             contact : quote.contacts[0],
             quoteTotal: 0,
             firmFees: 0,
