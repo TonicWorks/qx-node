@@ -27,9 +27,9 @@ module.exports = {
                     body.sessionId = sessionId;
                 }
                 body.campaignId = credentials.campaignId;
-                console.log('body is ',body);
+                console.log('body is now',body);
                 options.body = JSON.stringify(body);
-                console.log('options are ',options);
+                console.log('options are now',options);
                 return requestPromise(options);
 
             }, function (err) {
