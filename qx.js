@@ -27,9 +27,9 @@ module.exports = {
                     body.sessionId = sessionId;
                 }*/
                 body.campaignId = credentials.campaignId;
-                console.log('body is now',JSON.stringify(body));
+                //console.log('body is now',JSON.stringify(body));
                 options.body = JSON.stringify(body);
-                console.log('options are now',JSON.stringify(options));
+                //console.log('options are now',JSON.stringify(options));
                 return requestPromise(options);
 
             }, function (err) {
@@ -37,9 +37,9 @@ module.exports = {
                 return {success:false};
             })
             .then(function (response) {
-                console.log('quote is ok');
+                //console.log('quote is ok');
                 let body = JSON.parse(response.body);
-                console.log('quote is ', body);
+                //console.log('quote is ', body);
                 if(_.get(body, ['quoteId']) && _.get(body, ['hash'])){
                     let resp = {
                         success : true,
