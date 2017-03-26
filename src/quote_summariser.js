@@ -305,7 +305,7 @@ module.exports = function quoteSummariser(quote){
             }        
         }
         if(quoteDetails.rawSearchPack > 0){
-            quoteText.push("Because you are buying a property with a mortgage, your mortgage lender will require that property searches are ordered too, and these will cost and additional " + quoteDetails.searchPack + ". ");
+            quoteText.push("Because you are buying a property with a mortgage, your mortgage lender will require that property searches are ordered too, and these will cost an additional " + quoteDetails.searchPack + ". ");
             quoteText.push("Depending on where your property is located, your lender may ask us to order some more searches which will cost extra (for example if your property is located in a Coal Mining area or their is a perceived Flood Risk). ");
         }
         if(quoteDetails.rawLandReg > 0 || quoteDetails.rawStampDuty > 0 || quoteDetails.rawSearchPack > 0){
