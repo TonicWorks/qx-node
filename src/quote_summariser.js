@@ -147,7 +147,7 @@ module.exports = function quoteSummariser(quote){
 
                 switch (quoteEntry['fees'][i]['name']) {
                     case 'Stamp Duty':
-                        vars['quoteSnapshotDisbursementStampDuty'] = currencyFormatter.format(quoteEntry['fees'][i]['total'], { locale: 'en-GB' });
+                        vars['quoteSnapshotDisbursementStampDuty'] = quoteEntry['fees'][i]['total'];
                         vars['rawStampDuty'] = vars['quoteSnapshotDisbursementStampDuty'];
                         break;
                     case 'Land Registry Fee':
@@ -199,6 +199,7 @@ module.exports = function quoteSummariser(quote){
 
             vars['quoteSnapshotLegalExVat'] = currencyFormatter.format(vars['quoteSnapshotLegalExVat'], { locale: 'en-GB' });
             vars['quoteSnapshotDisbursementLandReg'] = currencyFormatter.format(vars['quoteSnapshotDisbursementLandReg'], { locale: 'en-GB' });
+            vars['quoteSnapshotDisbursementStampDuty'] = currencyFormatter.format(vars['quoteSnapshotDisbursementStampDuty'], { locale: 'en-GB' });
             vars['quoteSnapshotDisbursementSearchPack'] = currencyFormatter.format(vars['quoteSnapshotDisbursementSearchPack'], { locale: 'en-GB' });
 
             return vars;
@@ -290,22 +291,22 @@ module.exports = function quoteSummariser(quote){
         quoteText.push(description);
 
         if(quoteDetails.rawLandReg > 0 && quoteDetails.rawStampDuty > 0){
-            quoteText.push("In addition there is a fee of " + quoteDetails.landReg + " (payable to the Land Registry) and Stamp Duty Land Tax of " + quoteDetails.stampDuty + " (payable to HM Revenue and Customs) when your transaction completes.");
-            quoteText.push("We will ask you to transfer funds to us to cover these costs prior to completion of your matter, and then pay them on your behalf.");
+            quoteText.push("In addition there is a fee of " + quoteDetails.landReg + " (payable to the Land Registry) and Stamp Duty Land Tax of " + quoteDetails.stampDuty + " (payable to HM Revenue and Customs) when your transaction completes. ");
+            quoteText.push("We will ask you to transfer funds to us to cover these costs prior to completion of your matter, and then pay them on your behalf. ");
         }
         else{
             if(quoteDetails.rawLandReg > 0){
-                quoteText.push("In addition there is a fee of " + quoteDetails.landReg + " (payable to the Land Registry) when your transaction completes.");
-                quoteText.push("We will ask you to transfer funds to us to cover this fee prior to completion of your matter, and then pay it on your behalf.");
+                quoteText.push("In addition there is a fee of " + quoteDetails.landReg + " (payable to the Land Registry) when your transaction completes. ");
+                quoteText.push("We will ask you to transfer funds to us to cover this fee prior to completion of your matter, and then pay it on your behalf. ");
             }
             if(quoteDetails.rawStampDuty > 0){
-                quoteText.push("In addition there is Stamp Duty (SDLT) of " + quoteDetails.stampDuty + " (payable to HM Revenue and Customs) when your transaction completes.");
-                quoteText.push("We will ask you to transfer funds to us to cover this tax prior to completion of your matter, and then pay it on your behalf.");
+                quoteText.push("In addition there is Stamp Duty (SDLT) of " + quoteDetails.stampDuty + " (payable to HM Revenue and Customs) when your transaction completes. ");
+                quoteText.push("We will ask you to transfer funds to us to cover this tax prior to completion of your matter, and then pay it on your behalf. ");
             }        
         }
         if(quoteDetails.rawSearchPack > 0){
             quoteText.push("Because you are buying a property with a mortgage, your mortgage lender will require that property searches are ordered too, and these will cost and additional " + quoteDetails.searchPack + ". ");
-            quoteText.push("Depending on where your property is located, your lender may ask us to order some additional searches (for example if your property is located in a Coal Mining area or their is a perceived Flood Risk). ");
+            quoteText.push("Depending on where your property is located, your lender may ask us to order some more searches which will cost extra (for example if your property is located in a Coal Mining area or their is a perceived Flood Risk). ");
         }
         if(quoteDetails.rawLandReg > 0 || quoteDetails.rawStampDuty > 0 || quoteDetails.rawSearchPack > 0){
             quoteText.push("In total, your conveyancing will therefore cost " + quoteDetails.quoteTotal + ". ");
