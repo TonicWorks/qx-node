@@ -1,5 +1,5 @@
 module.exports = {
-    "static": {
+    "enums": {
         "WorkType":            {
             "RESIDENTIAL_PURCHASE":            1, "RESIDENTIAL_SALE": 2, "RESIDENTIAL_TRANSFER": 3, "RESIDENTIAL_REMORTGAGE": 4,
             "RESIDENTIAL_CASHBACK_REMORTGAGE": 5, "RESIDENTIAL_LEASE_EXTENSION": 6, "SCOTLAND_RESIDENTIAL_PURCHASE": 51, "SCOTLAND_RESIDENTIAL_SALE": 52,
