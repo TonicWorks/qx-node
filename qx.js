@@ -27,6 +27,9 @@ module.exports = {
                     body.sessionId = sessionId;
                 }*/
                 body.campaignId = credentials.campaignId;
+                if (credentials.extraParams) {
+                    body = Object.assign(body, credentials.extraParams);
+                }
                 //console.log('body is now',JSON.stringify(body));
                 options.body = JSON.stringify(body);
                 //console.log('options are now',JSON.stringify(options));
