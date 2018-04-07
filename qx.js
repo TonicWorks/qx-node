@@ -40,7 +40,8 @@ module.exports = {
                 return {success:false};
             })
             .then(function (response) {
-                //console.log('quote is ok');
+                console.log('quote is ok')
+                console.log('response is ', response.body);
                 let body = JSON.parse(response.body);
                 //console.log('quote is ', body);
                 if(_.get(body, ['quoteId']) && _.get(body, ['hash'])){
