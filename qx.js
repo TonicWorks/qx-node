@@ -98,7 +98,7 @@ module.exports = {
             .then(function(res) {
                 return res;
             }, function (error) {
-                console.log('got error', error);
+                console.log('Different error in retrieveQuote ', error);
                 return {success:false};
             });
     }
