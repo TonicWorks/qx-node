@@ -56,8 +56,8 @@ module.exports = {
                     return {success:false};
                 }
             }, function (error) {
-                console.log('got error' + error);
-                //console.log('got error', error.body, error.headers, error.statusCode, error.statusMessage);
+                console.log('got error in qx.js buildQuote ' + error);
+                console.log('got error', error.body, error.headers, error.statusCode, error.statusMessage);
                 return {success:false};
             })
             /*.then(function(res) {
@@ -91,6 +91,7 @@ module.exports = {
                     return {success:false};
                 }
             }, function (error) {
+                console.log('got error in qx.js retrieveQuote ' + error);
                 console.log('got error', error.body, error.headers, error.statusCode, error.statusMessage);
                 return {success:false};
             })
