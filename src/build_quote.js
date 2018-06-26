@@ -42,7 +42,7 @@ url for the api endpoint we are hitting
 module.exports = function buildQuote(contact,quoteEntries){
 
     function formatTenure(tenure){
-        if(tenure=='Leasehold'){
+        if(tenure=='Leasehold' || tenure=='leasehold'){
             return TENURE_TYPE_LEASEHOLD;
         }
         else{
@@ -124,6 +124,9 @@ module.exports = function buildQuote(contact,quoteEntries){
                 'tenureTypeId':formatTenure(details.tenure),
                 'mortgageTypeId':formatMortgage(details.mortgage),
                 'involvedParties':details.involvedParties,
+                'isInWales':details.isInWales,
+                'isFirstTimeBuyer':details.isFirstTimeBuyer,
+                'isAdditionalProperty':details.isAdditionalProperty
             }
         };
     }
