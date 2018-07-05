@@ -14,6 +14,6 @@
     "lodash": "^4.17.4",
     "minimal-request-promise": "^1.3.0"
   },
-  "version": "2.0.1",
+  "version": "2.1.0",
   "main": "qx.js"
 }
