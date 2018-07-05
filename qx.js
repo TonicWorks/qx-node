@@ -83,6 +83,7 @@ module.exports = {
                     return { success: false };
                 }
             }, function (error) {
+                console.log('got error in qx.js buildQuote ' + error);
                 console.log('got error', error.body, error.headers, error.statusCode, error.statusMessage);
                 return { success: false };
             })
@@ -113,12 +114,14 @@ module.exports = {
                     return { success: false };
                 }
             }, function (error) {
+                console.log('got error in qx.js retrieveQuote ' + error);
                 console.log('got error', error.body, error.headers, error.statusCode, error.statusMessage);
                 return { success: false };
             })
             .then(function (res) {
                 return res;
             }, function (error) {
+                console.log('Different error in retrieveQuote ' + error);
                 console.log('got error', error);
                 return { success: false };
             });
