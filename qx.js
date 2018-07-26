@@ -5,6 +5,7 @@ const urllib = require('url');
 const requestPromise = require('minimal-request-promise');
 const buildQuote = require('./src/build_quote');
 const summariseQuote = require('./src/quote_summariser');
+const urljoin = require('url-join');
 
 function credentialsToRequestOptions(credentials) {
 
@@ -47,7 +48,7 @@ module.exports = {
                 };
 
                 Object.assign(options, credentialsToRequestOptions(credentials));
-                options.path += '/api/1/quotes.json';
+                options.path = urljoin(options.path, '/api/1/quotes.json');
 
                 //optional session id so that qx can reference back to other systems - qx needs to be extended to accept it before we can start sending it
                 /*if(!_.isEmpty(sessionId)){
