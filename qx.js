@@ -102,7 +102,7 @@ module.exports = {
         };
 
         Object.assign(options, credentialsToRequestOptions(credentials));
-        options.path += '/api/1/quotes/' + hash + '.json';
+        options.path = urljoin(options.path, '/api/1/quotes/' + hash + '.json');
 
         return requestPromise(options)
             .then(function (response) {
